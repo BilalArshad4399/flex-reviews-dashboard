@@ -1,0 +1,215 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+:root {
+  /* Flex Brand Colors */
+  --flex-primary: #284E4C;
+  --flex-background: #FFFDF7;
+  --flex-text: #5C5C5A;
+  --flex-cream: #FAF8F3;
+  --flex-green-light: #4A7C7E;
+  --flex-green-dark: #1B3432;
+  
+  /* Light Mode - Using Flex color scheme */
+  --background: #FFFDF7;
+  --foreground: #284E4C;
+  --card: #FFFFFF;
+  --card-foreground: #284E4C;
+  --popover: rgba(255, 255, 255, 0.98);
+  --popover-foreground: #284E4C;
+  --primary: #284E4C;
+  --primary-foreground: #FFFDF7;
+  --secondary: #4A7C7E;
+  --secondary-foreground: #FFFFFF;
+  --muted: #FAF8F3;
+  --muted-foreground: #5C5C5A;
+  --accent: #4A7C7E;
+  --accent-foreground: #FFFFFF;
+  --destructive: #DC2626;
+  --destructive-foreground: #FFFFFF;
+  --border: #E5E2DA;
+  --input: #FFFFFF;
+  --ring: rgba(40, 78, 76, 0.3);
+  --chart-1: #284E4C;
+  --chart-2: #4A7C7E;
+  --chart-3: #7BA89F;
+  --chart-4: #A8D5BA;
+  --chart-5: #5C5C5A;
+  --radius: 0.75rem;
+  --sidebar: #FAF8F3;
+  --sidebar-foreground: #284E4C;
+  --sidebar-primary: #FFFFFF;
+  --sidebar-primary-foreground: #284E4C;
+  --sidebar-accent: #4A7C7E;
+  --sidebar-accent-foreground: #FFFFFF;
+  --sidebar-border: #E5E2DA;
+  --sidebar-ring: rgba(40, 78, 76, 0.3);
+  --font-dm-sans: "DM Sans", sans-serif;
+}
+
+.dark {
+  --background: #1B3432;
+  --foreground: #FFFDF7;
+  --card: #284E4C;
+  --card-foreground: #FFFDF7;
+  --popover: rgba(40, 78, 76, 0.98);
+  --popover-foreground: #FFFDF7;
+  --primary: #4A7C7E;
+  --primary-foreground: #FFFDF7;
+  --secondary: #7BA89F;
+  --secondary-foreground: #1B3432;
+  --muted: #2D5250;
+  --muted-foreground: #A8B5B3;
+  --accent: #7BA89F;
+  --accent-foreground: #1B3432;
+  --destructive: #EF4444;
+  --destructive-foreground: #FFFFFF;
+  --border: #2D5250;
+  --input: #284E4C;
+  --ring: rgba(74, 124, 126, 0.3);
+  --chart-1: #4A7C7E;
+  --chart-2: #7BA89F;
+  --chart-3: #A8D5BA;
+  --chart-4: #D4E5DC;
+  --chart-5: #A8B5B3;
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --font-sans: var(--font-dm-sans);
+  --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+}
+
+@layer base {
+  * {
+    /* Fixed invalid border-border class to use proper border color */
+    /* Fixed invalid outline-ring/50 class to use proper outline color */
+    @apply border-gray-200 outline-gray-300;
+  }
+  body {
+    background-color: var(--background);
+    color: var(--foreground);
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+}
+
+/* Custom animations and effects */
+@keyframes shimmer {
+  0% {
+    background-position: -200px 0;
+  }
+  100% {
+    background-position: calc(200px + 100%) 0;
+  }
+}
+
+@keyframes pulse-glow {
+  0%,
+  100% {
+    box-shadow: 0 0 20px rgba(40, 78, 76, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 30px rgba(40, 78, 76, 0.5);
+  }
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.shimmer {
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+  background-size: 200px 100%;
+  animation: shimmer 2s infinite;
+}
+
+.pulse-glow {
+  animation: pulse-glow 3s ease-in-out infinite;
+}
+
+.float {
+  animation: float 6s ease-in-out infinite;
+}
+
+.gradient-border {
+  position: relative;
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  border-radius: var(--radius);
+  padding: 2px;
+}
+
+.gradient-border::before {
+  content: "";
+  position: absolute;
+  inset: 2px;
+  background: var(--card);
+  border-radius: calc(var(--radius) - 2px);
+}
+
+/* Enhanced checkbox styling for better visibility */
+.enhanced-checkbox {
+  position: relative;
+  border: 2px solid hsl(var(--primary) / 0.6);
+  border-radius: 4px;
+  transition: all 0.2s ease-in-out;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.enhanced-checkbox:hover {
+  border-color: var(--primary);
+  box-shadow: 0 2px 8px rgba(40, 78, 76, 0.2);
+  transform: scale(1.05);
+}
+
+.enhanced-checkbox[data-state="checked"] {
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  border-color: var(--primary);
+  box-shadow: 0 2px 12px rgba(40, 78, 76, 0.3);
+}
+
+.enhanced-checkbox[data-state="checked"]:hover {
+  box-shadow: 0 4px 16px rgba(40, 78, 76, 0.4);
+}
+
+/* Flex brand specific styles */
+.flex-gradient {
+  background: linear-gradient(135deg, #284E4C 0%, #4A7C7E 100%);
+}
+
+.flex-gradient-light {
+  background: linear-gradient(135deg, #FAF8F3 0%, #FFFDF7 100%);
+}
+
+.flex-shadow {
+  box-shadow: 0 4px 6px -1px rgba(40, 78, 76, 0.1), 0 2px 4px -1px rgba(40, 78, 76, 0.06);
+}
+
+.flex-shadow-lg {
+  box-shadow: 0 10px 15px -3px rgba(40, 78, 76, 0.1), 0 4px 6px -2px rgba(40, 78, 76, 0.05);
+}
+
+/* Enhanced table row hover effects */
+.enhanced-table-row {
+  transition: all 0.2s ease-in-out;
+}
+
+.enhanced-table-row:hover {
+  background: linear-gradient(90deg, hsl(var(--muted) / 0.3), hsl(var(--primary) / 0.05), hsl(var(--muted) / 0.3));
+  transform: translateX(2px);
+}

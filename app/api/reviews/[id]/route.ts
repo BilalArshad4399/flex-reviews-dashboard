@@ -1,0 +1,49 @@
+import { type NextRequest, NextResponse } from "next/server"
+import { createClient } from "@supabase/supabase-js"
+
+const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!)
+
+export async function PATCH(request: NextRequest, { params }: { params: { id: string } }) {
+  try {
+    const { id } = params
+    const body = await request.json()
+    const { approved } = body
+
+    console.log(`[v0] Manager action: Setting review ${id} approved=${approved}`)
+
+    // Update review approval status
+    const { data, error } = await supabase
+      .from("reviews")
+      .update({
+        approved: approved,
+        updated_at: new Date().toISOString(),
+      })
+      .eq("id", id)
+      .select()
+      .single()
+
+    if (error) {
+      console.error("[v0] Database error:", error)
+      return NextResponse.json({ error: "Failed to update review" }, { status: 500 })
+    }
+
+    if (!data) {
+      return NextResponse.json({ error: "Review not found" }, { status: 404 })
+    }
+
+    console.log(`[v0] Review ${id} approval status updated to ${approved}`)
+
+    return NextResponse.json({
+      success: true,
+      message: `Review ${approved ? "approved" : "unapproved"} successfully`,
+      data: {
+        id: data.id,
+        approved: data.approved,
+        updated_at: data.updated_at,
+      },
+    })
+  } catch (error) {
+    console.error("[v0] Manager action error:", error)
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 })
+  }
+}

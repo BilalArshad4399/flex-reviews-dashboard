@@ -15,7 +15,6 @@ export async function GET(request: Request) {
     const to = searchParams.get("to")
     const approvedOnly = searchParams.get("approvedOnly") === "true"
 
-    console.log("[v0] API filters:", { listingId, type, ratingMin, from, to, approvedOnly })
 
     // Build query with joins
     let query = supabase.from("reviews").select(`
@@ -53,7 +52,7 @@ export async function GET(request: Request) {
     const { data: reviews, error } = await query.order("submitted_at", { ascending: false })
 
     if (error) {
-      console.error("[v0] Database error:", error)
+      console.error("Database error:", error)
       throw error
     }
 
@@ -84,7 +83,6 @@ export async function GET(request: Request) {
         categories: review.review_categories || [],
       })) || []
 
-    console.log(`[v0] Returning ${normalizedReviews.length} reviews`)
 
     return NextResponse.json({
       success: true,
@@ -93,7 +91,7 @@ export async function GET(request: Request) {
       filters: { listingId, type, ratingMin, from, to, approvedOnly },
     })
   } catch (error) {
-    console.error("[v0] API error:", error)
+    console.error("API error:", error)
     return NextResponse.json(
       {
         success: false,

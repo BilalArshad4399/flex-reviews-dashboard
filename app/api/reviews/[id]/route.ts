@@ -9,7 +9,6 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
     const body = await request.json()
     const { approved } = body
 
-    console.log(`[v0] Manager action: Setting review ${id} approved=${approved}`)
 
     // Update review approval status
     const { data, error } = await supabase
@@ -23,7 +22,6 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
       .single()
 
     if (error) {
-      console.error("[v0] Database error:", error)
       return NextResponse.json({ error: "Failed to update review" }, { status: 500 })
     }
 
@@ -31,7 +29,6 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
       return NextResponse.json({ error: "Review not found" }, { status: 404 })
     }
 
-    console.log(`[v0] Review ${id} approval status updated to ${approved}`)
 
     return NextResponse.json({
       success: true,
@@ -43,7 +40,6 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
       },
     })
   } catch (error) {
-    console.error("[v0] Manager action error:", error)
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })
   }
 }

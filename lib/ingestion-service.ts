@@ -71,7 +71,6 @@ export class ReviewIngestionService {
         updated: updatedCount,
       }
     } catch (error) {
-      console.error("Ingestion error:", error)
       return {
         success: false,
         message: `Ingestion failed: ${error instanceof Error ? error.message : "Unknown error"}`,
@@ -111,7 +110,6 @@ export class ReviewIngestionService {
       .single()
 
     if (checkError && checkError.code !== 'PGRST116') { // PGRST116 = no rows returned
-      console.error("Error checking existing review:", checkError)
       throw checkError
     }
 
@@ -136,7 +134,6 @@ export class ReviewIngestionService {
       .single()
 
     if (listingError) {
-      console.error("Listing upsert error:", listingError)
       throw listingError
     }
 
@@ -171,7 +168,6 @@ export class ReviewIngestionService {
       .single()
 
     if (reviewError) {
-      console.error("Review upsert error:", reviewError)
       throw new Error(`Database error: ${reviewError.message || reviewError}`)
     }
 
@@ -188,7 +184,6 @@ export class ReviewIngestionService {
       const { error: categoriesError } = await supabase.from("review_categories").insert(categories)
 
       if (categoriesError) {
-        console.error("Categories insert error:", categoriesError)
         throw categoriesError
       }
     }

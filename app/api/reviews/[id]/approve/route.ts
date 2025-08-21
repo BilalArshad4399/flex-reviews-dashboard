@@ -9,7 +9,6 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
     const body = await request.json()
     const { approved, rejectionReason, approvedBy, isRestricted } = body
 
-    console.log(`[v0] Approval action: Review ${id} approved=${approved} isRestricted=${isRestricted}`)
 
     // Determine the status based on approval and restriction
     let status = 'pending'
@@ -39,7 +38,6 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
       .single()
 
     if (error) {
-      console.error("[v0] Database error:", error)
       return NextResponse.json({ error: "Failed to update review" }, { status: 500 })
     }
 
@@ -47,7 +45,6 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
       return NextResponse.json({ error: "Review not found" }, { status: 404 })
     }
 
-    console.log(`[v0] Review ${id} status updated to: ${status}`)
 
     return NextResponse.json({
       success: true,
@@ -62,7 +59,6 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
       },
     })
   } catch (error) {
-    console.error("[v0] Legacy approval error:", error)
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })
   }
 }

@@ -8,7 +8,6 @@ export async function POST() {
 
     return NextResponse.json(result)
   } catch (error) {
-    console.error("Ingestion API error:", error)
     return NextResponse.json({ success: false, message: "Internal server error" }, { status: 500 })
   }
 }
@@ -20,7 +19,6 @@ export async function GET() {
 
     return NextResponse.json({ success: true, stats })
   } catch (error) {
-    console.error("Ingestion stats error:", error)
     return NextResponse.json({ success: false, message: "Internal server error" }, { status: 500 })
   }
 }

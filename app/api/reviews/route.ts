@@ -53,7 +53,6 @@ export async function GET(request: NextRequest) {
     const { data: reviews, error } = await query.order("submitted_at", { ascending: false })
 
     if (error) {
-      console.error("Database error:", error)
       throw error
     }
 
@@ -98,7 +97,6 @@ export async function GET(request: NextRequest) {
       filters: filters,
     })
   } catch (error) {
-    console.error("Error fetching reviews:", error)
     return NextResponse.json(
       { 
         success: false,

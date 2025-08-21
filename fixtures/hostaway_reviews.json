@@ -12,7 +12,7 @@
         { "category": "communication", "rating": 10 },
         { "category": "respect_house_rules", "rating": 10 }
       ],
-      "submittedAt": "2020-08-21 22:45:14",
+      "submittedAt": "2021-08-21 22:45:14",
       "guestName": "Shane Finkelstein",
       "listingName": "2B N1 A - 29 Shoreditch Heights"
     },
@@ -20,7 +20,7 @@
       "id": 7454,
       "type": "guest-to-host",
       "status": "published",
-      "rating": 8,
+      "rating": 9,
       "publicReview": "The apartment was very clean, but the check-in process was a bit confusing.",
       "reviewCategory": [
         { "category": "cleanliness", "rating": 9 },
@@ -50,11 +50,11 @@
       "id": 7456,
       "type": "host-to-guest",
       "status": "published",
-      "rating": null,
+      "rating": 5,
       "publicReview": "Sophie was a wonderful guest, very respectful of house rules.",
       "reviewCategory": [
-        { "category": "cleanliness", "rating": 10 },
-        { "category": "respect_house_rules", "rating": 10 }
+        { "category": "cleanliness", "rating": 5 },
+        { "category": "respect_house_rules", "rating": 5 }
       ],
       "submittedAt": "2021-05-22 18:30:00",
       "guestName": "Sophie Laurent",
@@ -90,6 +90,214 @@
       "submittedAt": "2021-09-14 11:55:00",
       "guestName": "Hiroshi Tanaka",
       "listingName": "Luxury Loft - Soho"
+    },
+    {
+      "id": 7459,
+      "type": "guest-to-host",
+      "status": "published",
+      "rating": 7,
+      "publicReview": "Absolutely perfect stay! The apartment was spotless, modern, and exactly as described. The location in Shoreditch is unbeatable - so many great restaurants and bars nearby. Will definitely book again!",
+      "reviewCategory": [
+        { "category": "cleanliness", "rating": 10 },
+        { "category": "communication", "rating": 10 },
+        { "category": "location", "rating": 10 },
+        { "category": "value", "rating": 10 }
+      ],
+      "submittedAt": "2022-02-15 14:30:00",
+      "guestName": "Alexandra Smith",
+      "listingName": "2B N1 A - 29 Shoreditch Heights"
+    },
+    {
+      "id": 7460,
+      "type": "guest-to-host",
+      "status": "published",
+      "rating": 9,
+      "publicReview": "Great apartment with excellent amenities. The self check-in was smooth and the host was very responsive. Only minor issue was some street noise at night, but that's expected in such a vibrant area.",
+      "reviewCategory": [
+        { "category": "cleanliness", "rating": 9 },
+        { "category": "communication", "rating": 10 },
+        { "category": "location", "rating": 9 },
+        { "category": "accuracy", "rating": 9 }
+      ],
+      "submittedAt": "2022-06-10 09:45:00",
+      "guestName": "Robert Wilson",
+      "listingName": "2B N1 A - 29 Shoreditch Heights"
+    },
+    {
+      "id": 7461,
+      "type": "guest-to-host",
+      "status": "published",
+      "rating": 8,
+      "publicReview": "Very comfortable stay. The apartment had everything we needed for a week-long business trip. Good workspace and fast WiFi. Would have been perfect with better blackout curtains.",
+      "reviewCategory": [
+        { "category": "cleanliness", "rating": 9 },
+        { "category": "communication", "rating": 8 },
+        { "category": "amenities", "rating": 8 },
+        { "category": "comfort", "rating": 7 }
+      ],
+      "submittedAt": "2023-01-20 16:20:00",
+      "guestName": "James Thompson",
+      "listingName": "2B N1 A - 29 Shoreditch Heights"
+    },
+    {
+      "id": 7462,
+      "type": "guest-to-host",
+      "status": "published",
+      "rating": 10,
+      "publicReview": "Fantastic experience from start to finish! The apartment is beautifully designed and maintained. The kitchen was fully equipped which was perfect for our extended stay. Highly recommend!",
+      "reviewCategory": [
+        { "category": "cleanliness", "rating": 10 },
+        { "category": "communication", "rating": 10 },
+        { "category": "amenities", "rating": 10 },
+        { "category": "value", "rating": 10 }
+      ],
+      "submittedAt": "2024-03-15 12:00:00",
+      "guestName": "Maria Garcia",
+      "listingName": "2B N1 A - 29 Shoreditch Heights"
+    },
+    {
+      "id": 7463,
+      "type": "guest-to-host",
+      "status": "published",
+      "rating": 9,
+      "publicReview": "Lovely modern apartment in a great location. Everything was clean and well-organized. The building amenities were excellent. Would definitely stay here again on my next London trip.",
+      "reviewCategory": [
+        { "category": "cleanliness", "rating": 10 },
+        { "category": "communication", "rating": 9 },
+        { "category": "location", "rating": 9 },
+        { "category": "accuracy", "rating": 9 }
+      ],
+      "submittedAt": "2024-11-28 18:30:00",
+      "guestName": "Oliver Brown",
+      "listingName": "2B N1 A - 29 Shoreditch Heights"
+    },
+    {
+      "id": 7464,
+      "type": "guest-to-host",
+      "status": "published",
+      "rating": 10,
+      "publicReview": "Outstanding property! The views from the apartment are spectacular and the interior design is top-notch. Everything worked perfectly and the host was incredibly helpful with local recommendations.",
+      "reviewCategory": [
+        { "category": "cleanliness", "rating": 10 },
+        { "category": "communication", "rating": 10 },
+        { "category": "comfort", "rating": 10 },
+        { "category": "location", "rating": 10 }
+      ],
+      "submittedAt": "2025-04-12 14:45:00",
+      "guestName": "Sarah Mitchell",
+      "listingName": "2B N1 A - 29 Shoreditch Heights"
+    },
+    {
+      "id": 7465,
+      "type": "guest-to-host",
+      "status": "published",
+      "rating": 9,
+      "publicReview": "Beautiful studio in the heart of London! The location couldn't be better - walking distance to all major attractions. The apartment was immaculate and had all modern conveniences.",
+      "reviewCategory": [
+        { "category": "cleanliness", "rating": 10 },
+        { "category": "location", "rating": 10 },
+        { "category": "communication", "rating": 8 },
+        { "category": "value", "rating": 9 }
+      ],
+      "submittedAt": "2021-10-05 11:30:00",
+      "guestName": "Isabella Romano",
+      "listingName": "Luxury Studio in Central London"
+    },
+    {
+      "id": 7466,
+      "type": "guest-to-host",
+      "status": "published",
+      "rating": 10,
+      "publicReview": "Exceeded all expectations! The studio is compact but perfectly designed with high-end finishes. The bed was extremely comfortable and the rainfall shower was a lovely touch. Perfect for a romantic weekend!",
+      "reviewCategory": [
+        { "category": "cleanliness", "rating": 10 },
+        { "category": "comfort", "rating": 10 },
+        { "category": "amenities", "rating": 10 },
+        { "category": "accuracy", "rating": 10 }
+      ],
+      "submittedAt": "2022-04-18 15:20:00",
+      "guestName": "David Anderson",
+      "listingName": "Luxury Studio in Central London"
+    },
+    {
+      "id": 7467,
+      "type": "guest-to-host",
+      "status": "published",
+      "rating": 8,
+      "publicReview": "Great central location and stylish studio. Everything was clean and modern. The only downside was the size - it's quite compact, but that's expected for central London. Overall very satisfied!",
+      "reviewCategory": [
+        { "category": "cleanliness", "rating": 9 },
+        { "category": "location", "rating": 10 },
+        { "category": "communication", "rating": 8 },
+        { "category": "comfort", "rating": 7 }
+      ],
+      "submittedAt": "2022-09-22 19:00:00",
+      "guestName": "Emma Davies",
+      "listingName": "Luxury Studio in Central London"
+    },
+    {
+      "id": 7468,
+      "type": "guest-to-host",
+      "status": "published",
+      "rating": 9,
+      "publicReview": "Wonderful stay in this luxury studio! The attention to detail is impressive - from the Egyptian cotton sheets to the Nespresso machine. The host was very professional and check-in was seamless.",
+      "reviewCategory": [
+        { "category": "cleanliness", "rating": 10 },
+        { "category": "communication", "rating": 9 },
+        { "category": "amenities", "rating": 10 },
+        { "category": "value", "rating": 8 }
+      ],
+      "submittedAt": "2023-07-14 10:15:00",
+      "guestName": "Thomas White",
+      "listingName": "Luxury Studio in Central London"
+    },
+    {
+      "id": 7469,
+      "type": "guest-to-host",
+      "status": "published",
+      "rating": 10,
+      "publicReview": "Absolutely loved this studio! It's like staying in a boutique hotel but with the comfort of home. The location is unbeatable and the quality of everything from the linens to the kitchen appliances is exceptional.",
+      "reviewCategory": [
+        { "category": "cleanliness", "rating": 10 },
+        { "category": "location", "rating": 10 },
+        { "category": "comfort", "rating": 10 },
+        { "category": "accuracy", "rating": 10 }
+      ],
+      "submittedAt": "2024-02-28 13:40:00",
+      "guestName": "Charlotte Evans",
+      "listingName": "Luxury Studio in Central London"
+    },
+    {
+      "id": 7470,
+      "type": "guest-to-host",
+      "status": "published",
+      "rating": 9,
+      "publicReview": "Stylish and well-appointed studio in a prime location. Everything was spotless and the smart TV with Netflix was a nice touch. Would definitely recommend for solo travelers or couples!",
+      "reviewCategory": [
+        { "category": "cleanliness", "rating": 10 },
+        { "category": "communication", "rating": 9 },
+        { "category": "amenities", "rating": 9 },
+        { "category": "location", "rating": 10 }
+      ],
+      "submittedAt": "2025-01-10 17:25:00",
+      "guestName": "Lucas Martin",
+      "listingName": "Luxury Studio in Central London"
+    },
+    {
+      "id": 7471,
+      "type": "guest-to-host",
+      "status": "published",
+      "rating": 7,
+      "publicReview": "Nice studio in Notting Hill. The area is lovely with great cafes and shops nearby. The apartment could use some updating but it was clean and functional for our needs.",
+      "reviewCategory": [
+        { "category": "cleanliness", "rating": 8 },
+        { "category": "location", "rating": 9 },
+        { "category": "communication", "rating": 7 },
+        { "category": "value", "rating": 7 }
+      ],
+      "submittedAt": "2022-11-15 14:00:00",
+      "guestName": "Rachel Green",
+      "listingName": "Cozy Studio - Notting Hill"
     }
   ]
 }

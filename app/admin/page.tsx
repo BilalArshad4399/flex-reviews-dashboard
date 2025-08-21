@@ -61,6 +61,7 @@ export default function AdminDashboard() {
   const [expandedProperty, setExpandedProperty] = useState<string | null>(null)
   const [syncing, setSyncing] = useState(false)
   const [activeTab, setActiveTab] = useState("overview")
+  const [reviewFilter, setReviewFilter] = useState<'all' | 'public' | 'private'>('all')
 
   useEffect(() => {
     fetchReviews()
@@ -1016,23 +1017,120 @@ export default function AdminDashboard() {
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  {/* Property Selector */}
-                  <Select value={selectedProperty} onValueChange={setSelectedProperty}>
-                    <SelectTrigger className="bg-white">
-                      <SelectValue placeholder="Select a property" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">All Properties</SelectItem>
-                      {properties.map(p => (
-                        <SelectItem key={p.name} value={p.name}>{p.name}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  {/* Filters and Controls */}
+                  <div className="flex flex-wrap gap-4 items-center">
+                    {/* Property Selector */}
+                    <Select 
+                      value={selectedProperty} 
+                      onValueChange={(value) => {
+                        setSelectedProperty(value)
+                        setSelectedReviewsForPublic(new Set())
+                      }}
+                    >
+                      <SelectTrigger className="bg-white w-[200px]">
+                        <SelectValue placeholder="Select a property" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">All Properties</SelectItem>
+                        {properties.map(p => (
+                          <SelectItem key={p.name} value={p.name}>{p.name}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    
+                    {/* Filter Buttons */}
+                    <div className="flex gap-2">
+                      <Button 
+                        size="sm" 
+                        variant={reviewFilter === 'all' ? 'default' : 'outline'}
+                        onClick={() => {
+                          setReviewFilter('all')
+                          setSelectedReviewsForPublic(new Set())
+                        }}
+                        className={reviewFilter === 'all' ? 'bg-[#284E4C] hover:bg-[#1e3a39] text-white' : ''}
+                      >
+                        All Reviews
+                      </Button>
+                      <Button 
+                        size="sm" 
+                        variant={reviewFilter === 'public' ? 'default' : 'outline'}
+                        onClick={() => {
+                          setReviewFilter('public')
+                          setSelectedReviewsForPublic(new Set())
+                        }}
+                        className={reviewFilter === 'public' ? 'bg-[#284E4C] hover:bg-[#1e3a39] text-white' : ''}
+                      >
+                        <Eye className="w-4 h-4 mr-1" />
+                        Public Only
+                      </Button>
+                      <Button 
+                        size="sm" 
+                        variant={reviewFilter === 'private' ? 'default' : 'outline'}
+                        onClick={() => {
+                          setReviewFilter('private')
+                          setSelectedReviewsForPublic(new Set())
+                        }}
+                        className={reviewFilter === 'private' ? 'bg-[#284E4C] hover:bg-[#1e3a39] text-white' : ''}
+                      >
+                        <EyeOff className="w-4 h-4 mr-1" />
+                        Private Only
+                      </Button>
+                    </div>
+                    
+                    {/* Select All Checkbox */}
+                    <div className="flex items-center gap-2 ml-auto">
+                      <input
+                        type="checkbox"
+                        id="select-all"
+                        checked={(() => {
+                          const filteredReviews = reviews
+                            .filter(r => selectedProperty === 'all' || r.listing_name === selectedProperty)
+                            .filter(r => {
+                              if (reviewFilter === 'public') return r.approval?.is_approved
+                              if (reviewFilter === 'private') return !r.approval?.is_approved
+                              return true
+                            })
+                            .slice(0, 20)
+                          return filteredReviews.length > 0 && 
+                                 filteredReviews.every(r => selectedReviewsForPublic.has(r.id))
+                        })()}
+                        onChange={(e) => {
+                          const filteredReviews = reviews
+                            .filter(r => selectedProperty === 'all' || r.listing_name === selectedProperty)
+                            .filter(r => {
+                              if (reviewFilter === 'public') return r.approval?.is_approved
+                              if (reviewFilter === 'private') return !r.approval?.is_approved
+                              return true
+                            })
+                            .slice(0, 20)
+                          
+                          if (e.target.checked) {
+                            const newSelected = new Set(selectedReviewsForPublic)
+                            filteredReviews.forEach(r => newSelected.add(r.id))
+                            setSelectedReviewsForPublic(newSelected)
+                          } else {
+                            const newSelected = new Set(selectedReviewsForPublic)
+                            filteredReviews.forEach(r => newSelected.delete(r.id))
+                            setSelectedReviewsForPublic(newSelected)
+                          }
+                        }}
+                        className="rounded border-gray-300 text-[#284E4C] focus:ring-[#284E4C]"
+                      />
+                      <Label htmlFor="select-all" className="text-sm font-medium">
+                        Select All
+                      </Label>
+                    </div>
+                  </div>
 
                   {/* Reviews List */}
                   <div className="space-y-3 max-h-[600px] overflow-y-auto">
                     {reviews
                       .filter(r => selectedProperty === 'all' || r.listing_name === selectedProperty)
+                      .filter(r => {
+                        if (reviewFilter === 'public') return r.approval?.is_approved
+                        if (reviewFilter === 'private') return !r.approval?.is_approved
+                        return true
+                      })
                       .slice(0, 20)
                       .map(review => (
                         <div key={review.id} className="p-4 border rounded-lg hover:bg-[#F1F3EE]">
@@ -1117,7 +1215,27 @@ export default function AdminDashboard() {
                       {selectedReviewsForPublic.size > 0 ? (
                         <span className="font-semibold">{selectedReviewsForPublic.size} reviews selected</span>
                       ) : (
-                        <span>{reviews.filter(r => r.approval?.is_approved).length} of {reviews.length} reviews are public</span>
+                        <span>
+                          {(() => {
+                            const filteredReviews = reviews
+                              .filter(r => selectedProperty === 'all' || r.listing_name === selectedProperty)
+                              .filter(r => {
+                                if (reviewFilter === 'public') return r.approval?.is_approved
+                                if (reviewFilter === 'private') return !r.approval?.is_approved
+                                return true
+                              })
+                            const publicCount = filteredReviews.filter(r => r.approval?.is_approved).length
+                            const totalCount = filteredReviews.length
+                            
+                            if (reviewFilter === 'public') {
+                              return `Showing ${publicCount} public reviews`
+                            } else if (reviewFilter === 'private') {
+                              return `Showing ${totalCount} private reviews`
+                            } else {
+                              return `${publicCount} of ${totalCount} reviews are public`
+                            }
+                          })()}
+                        </span>
                       )}
                     </div>
                     <div className="flex gap-2">
@@ -1261,13 +1379,49 @@ export default function AdminDashboard() {
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-2">
-                    <p className="font-semibold">Cleanliness</p>
-                    <p className="text-sm text-gray-600">
-                      Reported in {properties.filter(p => p.issues.includes('cleanliness')).length} properties
-                    </p>
-                    <Badge className="bg-orange-100 text-orange-800">
-                      Needs Attention
-                    </Badge>
+                    {(() => {
+                      // Calculate most common issue across all reviews
+                      const allIssues: Record<string, number> = {}
+                      reviews.forEach(review => {
+                        if (review.rating && review.rating < 7) {
+                          review.categories?.forEach(cat => {
+                            if (cat.rating < 7) {
+                              const categoryName = cat.category.replace(/_/g, ' ')
+                              allIssues[categoryName] = (allIssues[categoryName] || 0) + 1
+                            }
+                          })
+                        }
+                      })
+                      
+                      const sortedIssues = Object.entries(allIssues).sort(([,a], [,b]) => b - a)
+                      const topIssue = sortedIssues[0]
+                      
+                      if (topIssue) {
+                        return (
+                          <>
+                            <p className="font-semibold capitalize">{topIssue[0]}</p>
+                            <p className="text-sm text-gray-600">
+                              Reported in {topIssue[1]} reviews
+                            </p>
+                            <Badge className="bg-orange-100 text-orange-800">
+                              Needs Attention
+                            </Badge>
+                          </>
+                        )
+                      } else {
+                        return (
+                          <>
+                            <p className="font-semibold">No Issues</p>
+                            <p className="text-sm text-gray-600">
+                              All reviews are positive
+                            </p>
+                            <Badge className="bg-green-100 text-green-800">
+                              Excellent
+                            </Badge>
+                          </>
+                        )
+                      }
+                    })()}
                   </div>
                 </CardContent>
               </Card>
@@ -1283,14 +1437,41 @@ export default function AdminDashboard() {
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-2">
-                    <p className="text-2xl font-bold">
-                      {reviews.filter(r => new Date(r.submitted_at) > new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)).length}
-                    </p>
-                    <p className="text-sm text-gray-600">Reviews this week</p>
-                    <Badge className="bg-[#F1F3EE] text-[#284E4C]">
-                      <TrendingUp className="w-3 h-3 mr-1" />
-                      Active
-                    </Badge>
+                    {(() => {
+                      const now = new Date()
+                      const oneWeekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000)
+                      const oneMonthAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000)
+                      
+                      const thisWeek = reviews.filter(r => {
+                        const reviewDate = new Date(r.submitted_at)
+                        return reviewDate > oneWeekAgo
+                      }).length
+                      
+                      const thisMonth = reviews.filter(r => {
+                        const reviewDate = new Date(r.submitted_at)
+                        return reviewDate > oneMonthAgo
+                      }).length
+                      
+                      return (
+                        <>
+                          <p className="text-2xl font-bold">{thisWeek}</p>
+                          <p className="text-sm text-gray-600">Reviews this week</p>
+                          <Badge className="bg-[#F1F3EE] text-[#284E4C]">
+                            {thisMonth > 0 ? (
+                              <>
+                                <Activity className="w-3 h-3 mr-1" />
+                                {thisMonth} this month
+                              </>
+                            ) : (
+                              <>
+                                <Clock className="w-3 h-3 mr-1" />
+                                No recent activity
+                              </>
+                            )}
+                          </Badge>
+                        </>
+                      )
+                    })()}
                   </div>
                 </CardContent>
               </Card>

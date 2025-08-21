@@ -1,21 +1,12 @@
 # Flex Reviews Dashboard
 
-A modern review management dashboard for Flex Living properties, built with Next.js 15, TypeScript, and Supabase.
-
-## Features
-
-- 📊 **Dashboard**: Comprehensive analytics and review management
-- ✅ **Review Approval**: Approve, reject, or restrict reviews
-- 🔄 **Smart Sync**: Only syncs new or updated reviews using content hashing
-- 📈 **Analytics**: Review trends, rating distributions, and category insights
-- 🎨 **Modern UI**: Clean, responsive design with Flex Living branding
+A comprehensive review management system for vacation rental properties with integrations for Hostaway and Google Reviews.
 
 ## Prerequisites
 
-Before you begin, ensure you have:
-- Node.js 18+ installed
+- Node.js 18.x or higher
 - npm or yarn package manager
-- A Supabase account and project
+- Supabase account (for database)
 
 ## Local Setup Instructions
 
@@ -30,40 +21,109 @@ cd flex-reviews-dashboard
 
 ```bash
 npm install
-# or
-yarn install
 ```
 
-### 3. Set Up Supabase
+### 3. Environment Configuration
 
-1. Create a new Supabase project at [supabase.com](https://supabase.com)
-2. Go to your project's SQL Editor
-3. Run the schema from `scripts/supabase-schema.sql`:
-   - This creates the required tables: `listings`, `reviews`, and `review_categories`
-   - Sets up proper indexes and Row Level Security policies
-
-### 4. Configure Environment Variables
-
-Create a `.env.local` file in the root directory:
+Create a `.env.local` file in the root directory with the following variables:
 
 ```env
 # Supabase Configuration
-NEXT_PUBLIC_SUPABASE_URL=your_supabase_project_url
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
-SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_role_key
+NEXT_PUBLIC_SUPABASE_URL="your-supabase-project-url"
+SUPABASE_SERVICE_ROLE_KEY="your-supabase-service-role-key"
+
+# External Reviews API (Optional)
+REVIEWS_API_SECRET_KEY="your-gosign-api-key"
 ```
 
-To find these values:
-- Go to your Supabase project settings
-- Navigate to API settings
-- Copy the Project URL, anon/public key, and service_role key
+#### Getting Supabase Credentials:
+
+1. Go to [supabase.com](https://supabase.com) and create a new project
+2. Navigate to Settings > API
+3. Copy the Project URL for `NEXT_PUBLIC_SUPABASE_URL`
+4. Copy the Service Role Key for `SUPABASE_SERVICE_ROLE_KEY`
+
+### 4. Database Setup
+
+Run the following SQL migrations in your Supabase SQL editor:
+
+#### Create Reviews Tables
+
+```sql
+-- Create listings table
+CREATE TABLE IF NOT EXISTS listings (
+  id SERIAL PRIMARY KEY,
+  external_id VARCHAR(255) UNIQUE NOT NULL,
+  name VARCHAR(255) NOT NULL,
+  created_at TIMESTAMP DEFAULT NOW(),
+  updated_at TIMESTAMP DEFAULT NOW()
+);
+
+-- Create reviews table
+CREATE TABLE IF NOT EXISTS reviews (
+  id SERIAL PRIMARY KEY,
+  external_id VARCHAR(255) UNIQUE NOT NULL,
+  listing_id INTEGER REFERENCES listings(id),
+  type VARCHAR(50),
+  overall_rating INTEGER,
+  public_review TEXT,
+  submitted_at TIMESTAMP,
+  guest_name VARCHAR(255),
+  source VARCHAR(50),
+  status VARCHAR(50) NOT NULL DEFAULT 'pending',
+  approved BOOLEAN,
+  content_hash VARCHAR(255),
+  created_at TIMESTAMP DEFAULT NOW(),
+  updated_at TIMESTAMP DEFAULT NOW()
+);
+
+-- Create review categories table
+CREATE TABLE IF NOT EXISTS review_categories (
+  id SERIAL PRIMARY KEY,
+  review_id INTEGER REFERENCES reviews(id) ON DELETE CASCADE,
+  category VARCHAR(100),
+  rating INTEGER,
+  created_at TIMESTAMP DEFAULT NOW()
+);
+
+-- Create review approvals table
+CREATE TABLE IF NOT EXISTS review_approvals (
+  id SERIAL PRIMARY KEY,
+  review_id INTEGER REFERENCES reviews(id) ON DELETE CASCADE,
+  is_approved BOOLEAN NOT NULL,
+  approved_by VARCHAR(255),
+  approved_at TIMESTAMP DEFAULT NOW()
+);
+
+-- Create Google reviews table (for external API integration)
+CREATE TABLE IF NOT EXISTS google_reviews (
+  id SERIAL PRIMARY KEY,
+  uid INTEGER,
+  pid INTEGER,
+  review_id VARCHAR(255) UNIQUE NOT NULL,
+  reviewer_profile_photo_url TEXT,
+  reviewer_display_name VARCHAR(255),
+  star_rating VARCHAR(50),
+  rating_value INTEGER,
+  create_time TIMESTAMP,
+  update_time TIMESTAMP,
+  comment TEXT,
+  original_comment TEXT,
+  reply_comment TEXT,
+  original_reply_comment TEXT,
+  reply_time TIMESTAMP,
+  location_id INTEGER,
+  branch_id INTEGER,
+  source VARCHAR(100),
+  location_title VARCHAR(255),
+  fetched_at TIMESTAMP DEFAULT NOW()
+);
+```
 
 ### 5. Run the Development Server
 
 ```bash
 npm run dev
-# or
-yarn dev
 ```
 
 The application will be available at [http://localhost:3000](http://localhost:3000)
@@ -73,89 +133,51 @@ The application will be available at [http://localhost:3000](http://localhost:30
 ```
 flex-reviews-dashboard/
 ├── app/                    # Next.js app directory
+│   ├── admin/             # Admin dashboard
 │   ├── api/               # API routes
-│   │   ├── ingest/        # Review ingestion endpoint
-│   │   └── reviews/       # Review management endpoints
-│   ├── dashboard/         # Dashboard page
-│   ├── reviews/           # Public reviews page
-│   └── page.tsx           # Landing page
-├── components/            # React components
-│   ├── dashboard/         # Dashboard-specific components
-│   └── reviews/           # Review page components
-├── lib/                   # Utility functions and services
-│   ├── ingestion-service.ts # Review sync logic with hashing
-│   └── types.ts           # TypeScript type definitions
-├── fixtures/              # Sample data
-│   └── hostaway_reviews.json # Sample review data
-└── scripts/               # Database scripts
-    └── supabase-schema.sql # Database schema
+│   ├── google-reviews/    # Google reviews page
+│   ├── properties/        # Property listings
+│   └── property/[id]/     # Individual property pages
+├── components/            # Reusable React components
+├── fixtures/             # Mock data for development
+├── lib/                  # Utility functions and services
+├── migrations/           # Database migrations
+└── public/              # Static assets
 ```
 
-## Key Features Explained
+## Features
 
-### Smart Review Syncing
-- Uses SHA256 content hashing to detect changes
-- Only syncs new or modified reviews
-- Preserves approval status for existing reviews
-
-### Review Management
-- **Pending**: New reviews awaiting approval
-- **Approved**: Reviews visible on the public page
-- **Restricted**: Hidden reviews that won't appear publicly
-
-### Bulk Operations
-- Select multiple reviews for bulk approval/restriction
-- Smart filtering prevents invalid operations
+- **Admin Dashboard**: Comprehensive review management interface
+- **Review Sync**: Import reviews from JSON fixtures or external APIs
+- **Review Filtering**: Filter by property, rating, and approval status
+- **Bulk Actions**: Approve/reject multiple reviews at once
+- **Google Reviews Integration**: Fetch and display Google reviews
+- **Property Pages**: Individual pages for each property with reviews
+- **Analytics**: Review statistics and performance metrics
 
 ## Available Scripts
 
-```bash
-npm run dev      # Start development server
-npm run build    # Build for production
-npm run start    # Start production server
-npm run lint     # Run ESLint
-npm run typecheck # Run TypeScript type checking
-```
+- `npm run dev` - Start development server
+- `npm run build` - Build for production
+- `npm run start` - Start production server
+- `npm run lint` - Run ESLint
 
-## Syncing Reviews
+## API Endpoints
 
-1. Navigate to the Dashboard (`/dashboard`)
-2. Click "Sync Reviews" button
-3. The system will:
-   - Check for new reviews in `fixtures/hostaway_reviews.json`
-   - Compare content hashes to detect changes
-   - Only insert/update changed reviews
-   - Display sync results (new, updated, skipped)
-
-## Deployment
-
-The app can be deployed to any platform that supports Next.js:
-- Vercel (recommended)
-- Netlify
-- AWS Amplify
-- Self-hosted with Node.js
-
-### Environment Variables for Production
-Make sure to set the same environment variables in your deployment platform.
+- `GET /api/reviews` - Fetch all reviews
+- `POST /api/ingest` - Sync reviews from fixtures
+- `POST /api/reviews/[id]/approve` - Approve/reject a review
+- `GET /api/reviews/google` - Fetch Google reviews
+- `POST /api/reviews/google/fetch` - Sync Google reviews from external API
 
 ## Troubleshooting
 
-### Reviews not showing
-- Check if reviews are approved in the dashboard
-- Verify Supabase connection in browser console
-- Ensure RLS policies are correctly set
+### Common Issues
 
-### Sync button error
-- Verify `content_hash` column exists in the reviews table
-- Check Supabase service role key is set correctly
-- Review browser console for detailed error messages
+1. **Database connection errors**: Verify your Supabase credentials in `.env.local`
+2. **Build errors**: Clear Next.js cache with `rm -rf .next` and rebuild
+3. **Missing reviews**: Run sync from Admin Dashboard to import fixture data
 
-### Database Issues
-If you see database errors:
-1. Ensure all tables exist (run the schema SQL)
-2. Check that the `content_hash` column is present
-3. Verify API keys are correct
+## License
 
-## Support
-
-For issues or questions, please check the browser console for detailed error messages and ensure all environment variables are correctly set.
+Private - All rights reserved

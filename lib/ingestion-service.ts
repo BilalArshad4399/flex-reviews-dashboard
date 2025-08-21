@@ -57,10 +57,6 @@ export class ReviewIngestionService {
         }
       }
 
-      
-      if (errorCount > 0) {
-      }
-
       return {
         success: errorCount === 0,
         message: errorCount === 0 
@@ -83,16 +79,19 @@ export class ReviewIngestionService {
 
   private calculateContentHash(review: HostawayReview): string {
     // Create a deterministic string from review content
-    const contentString = JSON.stringify({
+    // Sort keys to ensure consistent hash regardless of property order
+    const contentObj = {
       id: review.id,
       type: review.type,
-      rating: review.rating,
+      rating: review.rating === null ? 'null' : review.rating, // Handle null explicitly
       publicReview: review.publicReview,
-      reviewCategory: review.reviewCategory,
+      reviewCategory: review.reviewCategory ? JSON.stringify(review.reviewCategory.sort((a, b) => a.category.localeCompare(b.category))) : '[]',
       submittedAt: review.submittedAt,
       guestName: review.guestName,
       listingName: review.listingName,
-    })
+    }
+    
+    const contentString = JSON.stringify(contentObj)
     
     // Generate SHA256 hash
     return crypto.createHash('sha256').update(contentString).digest('hex')
@@ -107,9 +106,9 @@ export class ReviewIngestionService {
       .from("reviews")
       .select("id, content_hash, status, approved")
       .eq("external_id", review.id.toString())
-      .single()
+      .maybeSingle()
 
-    if (checkError && checkError.code !== 'PGRST116') { // PGRST116 = no rows returned
+    if (checkError) {
       throw checkError
     }
 
@@ -138,28 +137,34 @@ export class ReviewIngestionService {
     }
 
     // Prepare review data
-    const reviewData = {
+    const submittedDate = new Date(review.submittedAt).toISOString()
+    
+    const reviewData: any = {
       external_id: review.id.toString(),
       listing_id: listing.id,
       type: review.type,
-      overall_rating: review.rating,
       public_review: review.publicReview,
-      submitted_at: new Date(review.submittedAt).toISOString(),
+      submitted_at: submittedDate,
       guest_name: review.guestName,
       source: "hostaway",
       content_hash: contentHash,
       updated_at: new Date().toISOString(),
     }
+    
+    // Only include rating if it's not null
+    if (review.rating !== null) {
+      reviewData.overall_rating = review.rating
+    }
 
     // If it's a new review, set it to pending
     if (!existingReview) {
-      Object.assign(reviewData, {
-        status: "pending",
-        approved: null,
-      })
+      reviewData.status = "pending"
+      reviewData.approved = null
+    } else {
+      // If it's an existing review being updated, preserve its status and approval
+      reviewData.status = existingReview.status || "pending"
+      reviewData.approved = existingReview.approved
     }
-    // If it's an existing review being updated, preserve its approval status
-    // Only update the content fields, not the approval status
 
     const { data: upsertedReview, error: reviewError } = await supabase
       .from("reviews")

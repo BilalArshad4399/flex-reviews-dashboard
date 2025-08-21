@@ -1,0 +1,211 @@
+================================================================================
+                    FLEX REVIEWS DASHBOARD - TECHNICAL DOCUMENTATION
+================================================================================
+
+PROJECT OVERVIEW
+----------------
+The Flex Reviews Dashboard is a comprehensive review management system designed 
+for vacation rental properties. It provides centralized management for reviews 
+with advanced filtering, analytics, and bulk management capabilities.
+
+PROJECT HOSTING & ACCESS
+------------------------
+- Main page: https://flex-reviews-dashboard-mu.vercel.app/
+- Admin dashboard: https://flex-reviews-dashboard-mu.vercel.app/admin
+- Properties listing: https://flex-reviews-dashboard-mu.vercel.app/properties
+- Property detail pages: 
+  - https://flex-reviews-dashboard-mu.vercel.app/property/175160
+  - https://flex-reviews-dashboard-mu.vercel.app/property/128652
+- Google reviews: https://flex-reviews-dashboard-mu.vercel.app/google-reviews
+- Local setup instructions available in README.md
+
+================================================================================
+
+TECHNOLOGY STACK
+----------------
+
+FRONTEND:
+- Next.js 15.1.6 (App Router)
+- React 19
+- TypeScript 5
+- Tailwind CSS 3.4
+- Framer Motion (animations)
+- Recharts (data visualization for dashboard charts)
+- Lucide React (icons)
+
+BACKEND:
+- Next.js API Routes
+- Supabase (PostgreSQL database)
+- Node.js runtime
+
+DATABASE:
+- Supabase (PostgreSQL)
+- Row Level Security (RLS)
+- Real-time subscriptions capable
+
+DEVELOPMENT TOOLS:
+- ESLint
+- PostCSS
+- npm/yarn package manager
+
+================================================================================
+
+KEY DESIGN & LOGIC DECISIONS
+-----------------------------
+
+1. DATABASE ARCHITECTURE:
+   - Separate tables for different review sources (reviews, google_reviews)
+   - Content hashing (SHA256) for efficient sync detection
+   - Normalized structure with foreign key relationships
+   - Status tracking (pending/approved) for review moderation
+
+2. SYNC MECHANISM:
+   - Smart sync using content hashes to detect changes
+   - Only updates modified reviews (reduces API calls)
+   - Preserves approval status during updates
+   - Batch processing with error resilience
+
+3. UI/UX DESIGN:
+   - Tab-based navigation for different functions
+   - Real-time filtering without page reloads
+   - Bulk selection with "Select All" functionality
+   - Responsive design with mobile support
+   - Performance metrics visualization
+
+4. DASHBOARD ANALYTICS:
+   - Interactive charts using Recharts library
+   - Review trends visualization over time
+   - Rating distribution charts
+   - Property performance metrics
+   - Response rate analytics
+   - Real-time data updates
+
+5. STATE MANAGEMENT:
+   - React hooks for local state
+   - Server-side rendering for initial data
+   - Optimistic UI updates for better UX
+   - Client-side caching for performance
+
+================================================================================
+
+API BEHAVIORS & ENDPOINTS
+--------------------------
+
+1. GET /api/reviews
+   - Fetches all reviews from database
+   - Includes approval status and categories
+   - Returns normalized data structure
+
+2. POST /api/ingest
+   - Syncs reviews from fixtures/hostaway_reviews.json
+   - Uses content hashing for deduplication
+   - Returns: {processed, updated, skipped, errors}
+
+3. POST /api/reviews/[id]/approve
+   - Toggles review approval status
+   - Creates approval record with timestamp
+   - Body: {approved: boolean, approvedBy: string}
+
+4. GET /api/reviews/google
+   - Fetches Google reviews from database
+   - Transforms data for frontend compatibility
+   - Falls back to empty array if no data
+
+5. POST /api/reviews/google/fetch
+   - Syncs from external GoSign API
+   - Endpoint: https://dashboard.gosign.de/review/api/{API_KEY}/reviews-list.json
+   - Handles duplicate prevention
+
+6. GET /api/reviews/hostaway
+   - CRITICAL ENDPOINT FOR TESTING
+   - Returns properly structured and filtered review data
+   - Only passes approved reviews to frontend
+   - Includes property information and metadata
+   - Response format optimized for frontend consumption
+
+================================================================================
+
+HOSTAWAY API INTEGRATION
+------------------------
+
+AUTHENTICATION:
+- Successfully authenticated with Hostaway API
+- Authentication screenshots available in "postman hostaway/" folder
+- Demonstrates proper OAuth2 implementation
+- Token management and refresh handling
+
+IMPLEMENTATION STEPS:
+1. Data Source: Reviews data stored in JSON file (fixtures/hostaway_reviews.json)
+2. Data Ingestion: POST /api/ingest route reads from source and saves data to database
+3. Database Operations: Dashboard actions (approve/reject) directly modify data in database
+4. Data Filtering: GET /api/reviews/hostaway converts to structured format optimized for frontend
+5. Approval Control: Only approved reviews are passed to frontend through the hostaway endpoint
+
+================================================================================
+
+GOOGLE REVIEWS INTEGRATION - FINDINGS
+--------------------------------------
+
+IMPORTANT NOTE: 
+Could not obtain Google Places API key. Google Reviews are fetched through 
+an external API service, not through Google Places API directly.
+
+DEMONSTRATION DATA SOURCE:
+- Business: REDDY Küchen Ansbach (Kitchen Store in Germany)
+- Google URL: https://www.google.com/search?q=REDDY+Küchen+Ansbach+Reviews
+- Purpose: UI/UX demonstration and functionality testing
+
+EXTERNAL API INTEGRATION:
+- Endpoint: https://dashboard.gosign.de/review/api/{API_KEY}/reviews-list.json
+- API Key Location: .env.local file (REVIEWS_API_SECRET_KEY)
+- Test Key: 6320d973f681d71fa0a9427d51c5b630 (for verification purposes)
+- Data fetched through third-party aggregation service
+
+IMPLEMENTATION DETAILS:
+1. Created dedicated google_reviews table in database
+2. Implemented fetch endpoint at /api/reviews/google/fetch
+3. Data transformation from German to English
+4. Rating conversion (star ratings to numeric values)
+5. Pagination with "Load More" functionality
+6. Responsive card-based layout
+
+TECHNICAL FINDINGS:
+- Successfully integrated external API with error handling
+- Implemented duplicate prevention using review_id
+- Created update mechanism for existing reviews
+- Added timestamp tracking for data freshness
+- Null rating handling for incomplete reviews
+
+LIMITATIONS:
+- Data is from a German business (translated to English)
+- Used for demonstration of technical capability only
+
+================================================================================
+
+CRITICAL IMPLEMENTATION NOTES
+------------------------------
+
+1. ENVIRONMENT VARIABLES:
+   - NEXT_PUBLIC_SUPABASE_URL: Public Supabase endpoint
+   - SUPABASE_SERVICE_ROLE_KEY: Admin access for database
+   - REVIEWS_API_SECRET_KEY: External API authentication
+
+2. DATABASE MIGRATIONS:
+   - Must run SQL migrations before first use
+   - Content_hash column is required for sync
+   - Status field cannot be NULL
+
+3. ERROR HANDLING:
+   - All API endpoints have try-catch blocks
+   - Database errors are logged with context
+   - User-friendly error messages returned
+
+4. PERFORMANCE OPTIMIZATIONS:
+   - Lazy loading for review lists
+   - Pagination limits (20 items default)
+   - Client-side filtering for instant response
+   - Indexed database columns for quick queries
+
+================================================================================
+
+END OF TECHNICAL DOCUMENTATION

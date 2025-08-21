@@ -33,7 +33,7 @@ NEXT_PUBLIC_SUPABASE_URL="your-supabase-project-url"
 SUPABASE_SERVICE_ROLE_KEY="your-supabase-service-role-key"
 
 # External Reviews API (Optional)
-REVIEWS_API_SECRET_KEY="your-gosign-api-key"
+REVIEWS_API_SECRET_KEY="your-external-api-key"
 ```
 
 #### Getting Supabase Credentials:
